@@ -1,0 +1,346 @@
+"""
+The DateFormat enum list all the supported styles available
+when formatting Time values.
+"""
+enum DateFormat {
+  """
+  Example: "2006-01-02T15:04:05Z07:00"
+  """
+  RFC3339
+  """
+  Example: "02 Jan 06 15:04 MST"
+  """
+  RFC822
+  """
+  Returns the date as its UNIX timestamp value (in seconds)
+  """
+  UNIX
+}
+
+"""
+Supported standard for generating hash values. All hashes are
+displayed as hex encoded strings.
+"""
+enum Digest {
+  """
+  Returns a 32 byte hash using the SHA256 standard.
+  """
+  SHA2
+
+  """
+  Returns a 32 byte hash using the SHA3-256 standard.
+  """
+  SHA3
+}
+
+"""
+Supported representation formats for linked data (LD) documents
+"""
+enum DocumentMode {
+  """
+  RDF dataset on the JSON-LD document, the algorithm used is "URDNA2015"
+  and the format "application/n-quads.
+
+  https://json-ld.github.io/normalization/spec
+  """
+  NORMALIZED
+
+  """
+  Expanded JSON-LD document.
+
+  http://www.w3.org/TR/json-ld-api/#expansion-algorithm
+  """
+  EXPANDED
+}
+
+"""
+Decentralized identifier instace.
+"""
+type Identifier {
+  """
+  ID segment for the identifier instance.
+  """
+  id: String!
+
+  """
+  Cryptographic keys associated with the identifier instance.
+  """
+  keys: [PublicKey!]!
+
+  """
+  Enabled authentication mechanisms.
+  """
+  authenticationMethods: [String!]!
+
+  """
+  Creation date.
+  """
+  created(
+    """
+    Format style for the returned date values.
+    RFC3339 will be used by default if not specified.
+    """
+    format: DateFormat = RFC3339
+  ): String!
+
+  """
+  Time of last update.
+  """
+  updated(
+    """
+    Format style for the returned date values.
+    RFC3339 will be used by default if not specified.
+    """
+    format: DateFormat = RFC3339
+  ): String!
+
+  """
+  Linked Data document for the identifier instance.
+  """
+  document(
+    """
+    Encoding format to use.
+    """
+    mode: DocumentMode = NORMALIZED
+  ): String!
+}
+
+"""
+PublicKey represents a cryptographic key according to the "Linked Data
+Cryptographic Suites".
+
+https://w3c-ccg.github.io/ld-cryptosuite-registry/
+"""
+type PublicKey {
+  """
+  Unique identifier for the key reference.
+  """
+  id: String!
+
+  """
+  Cryptographic suite identifier.
+  """
+  kind: String!
+
+  """
+  Subject controlling the corresponding private key.
+  """
+  controller: String!
+
+  """
+  Public key value. Encoded in base64 as defined in RFC 4648
+  """
+  value: String!
+}
+
+"""
+Proofs add authentication and integrity protection to linked data documents
+through the use of mathematical algorithms. Proof documents can be used as
+evidence of compliance and/or consent.
+
+https://w3c-ccg.github.io/ld-proofs/
+"""
+type Proof {
+  """
+  A URI that identifies the digital proof suite used.
+  """
+  kind: String!
+
+  """
+  A link to a machine-readable object, such as a DID Document, that contains
+  authorization relations that explicitly permit the use of certain verification
+  methods for specific purposes. For example, a controller object could contain
+  statements that restrict a public key to being used only for signing Verifiable
+  Credentials and no other kinds of documents.
+  """
+  controller: String!
+
+  """
+  Creation date.
+  """
+  created(
+    """
+    Format style for the returned date values.
+    RFC3339 will be used by default if not specified.
+    """
+    format: DateFormat = RFC3339
+  ): String!
+
+  """
+  A string value that specifies the operational domain of a digital proof.
+  This may be an Internet domain name like "example.com", a ad-hoc value such
+  as "corp-level3-access", or a very specific transaction value like "8zF6T$mqP".
+  A signer may include a domain in its digital proof to restrict its use to
+  particular target, identified by the specified domain.
+  """
+  domain: String!
+
+  """
+  A random or pseudo-random value used by some authentication protocols to
+  mitigate replay attacks. Optional.
+  """
+  challenge: String!
+
+  """
+  A string value that is included in the digital proof and MUST only be used
+  once for a particular domain and window of time. This value is used to mitigate
+  replay attacks.
+  """
+  nonce: String!
+
+  """
+  The specific intent for the proof, the reason why an entity created it.
+  Acts as a safeguard to prevent the proof from being misused for a purpose
+  other than the one it was intended for. For example, a proof can be used
+  for purposes of authentication, for asserting control of a Verifiable
+  Credential (assertionMethod), and several others.
+
+  Common values include: authentication, assertionMethod, keyAgreement,
+  capabilityInvocation, capabilityDelegation.
+
+  https://w3c-ccg.github.io/ld-proofs/#proof-purpose
+  """
+  purpose: String!
+
+  """
+  A set of parameters required to independently verify the proof, such as
+  an identifier for a public/private key pair that would be used in the
+  proof.
+  """
+  verificationMethod: String!
+
+  """
+  Value produced. Encoded in base64 as defined in RFC 4648.
+  """
+  value: String!
+
+  """
+  RDF dataset on the JSON-LD document, the algorithm used is "URDNA2015"
+  and the format "application/n-quads.
+
+  https://json-ld.github.io/normalization/spec
+  """
+  document: String!
+}
+
+"""
+Verifiable digital credential.
+"""
+type Credential {
+  """
+  Compact representation of the generated credential. Usually to be used as
+  a 'bearer' token to access a digital service or other form of protected resource.
+  """
+  token: String!
+}
+
+"""
+Request a new proof document.
+"""
+input ProofRequest {
+  """
+  ID segment of the identifier instance to be used to generate the proof.
+  """
+  id: String!
+
+  """
+  Data to use as proof content. Usually some form of challenge or data structure.
+  """
+  data: String!
+
+  """
+  A string value that specifies the operational domain of a digital proof.
+  """
+  domain: String!
+
+  """
+  The specific intent for the proof, the reason why an entity created it.
+  Acts as a safeguard to prevent the proof from being misused for a purpose
+  other than the one it was intended for. For example, a proof can be used
+  for purposes of authentication, for asserting control of a Verifiable
+  Credential (assertionMethod), and several others.
+
+  Common values include: authentication, assertionMethod, keyAgreement,
+  capabilityInvocation, capabilityDelegation.
+
+  https://w3c-ccg.github.io/ld-proofs/#proof-purpose
+  """
+  purpose: String!
+}
+
+"""
+Request a new credential.
+"""
+input CredentialRequest {
+  """
+  The principal that is the subject of the requested credential, required.
+  """
+  subject: String!
+
+  """
+  Recipients the credential is intended for, required.
+  """
+  audience: [String!]!
+
+  """
+  Set an expiration value for the credential.
+  A duration string is a signed sequence of decimal numbers, each with optional
+  fraction and a unit suffix, such as "300ms", "1.5h" or "2h45m". Valid time units
+  are: "ns", "us" (or "µs"), "ms", "s", "m", "h"
+  Optional when generating a new token, defaults to "720h".
+  """
+  expiration: String!
+
+  """
+  The time before which the credential MUST NOT be accepted for processing.
+  A duration string is a signed sequence of decimal numbers, each with optional
+  fraction and a unit suffix, such as "300ms", "1.5h" or "2h45m". Valid time units
+  are: "ns", "us" (or "µs"), "ms", "s", "m", "h"
+  Optional when generating a new token, defaults to "0s".
+  """
+  notBefore: String!
+
+  """
+  JSON-encoded custom claims to include in the credential payload.
+  """
+  payload: String!
+}
+
+type Query {
+  """
+  Retrieve the associated information with a given DID.
+  """
+  resolve(
+    """
+    ID segment for the identifier instance.
+    """
+    id: String!
+  ): Identifier
+
+  """
+  Validate an existing credential.
+  """
+  isCredentialValid(
+    """
+    Compact representation of a previously generated credential.
+    """
+    token: String!
+  ): Boolean!
+}
+
+type Mutation {
+  """
+  Generate a new DID.
+  """
+  newIdentifier: Identifier!
+
+  """
+  Generate a new proof document.
+  """
+  newProof(req: ProofRequest): Proof!
+
+  """
+  Generate a new verfiable credential.
+  """
+  newCredential(req: CredentialRequest): Credential!
+}

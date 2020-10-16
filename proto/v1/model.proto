@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package aidtech.dlt4eu.proto.v1;
+
+option go_package = "v1;protov1";
+option java_multiple_files = true;
+option java_outer_classname = "ModelProto";
+option java_package = "aidtech.dlt4eu.proto.v1";
+option csharp_namespace = "Aidtech.DLT4EU.Proto.V1";
+option php_namespace = "Aidtech\\DLT4EU\\Proto\\V1";
+option ruby_package = "aidtech.dlt4eu.proto.v1";

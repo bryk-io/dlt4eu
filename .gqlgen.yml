@@ -1,0 +1,19 @@
+# More information: https://gqlgen.com/config/
+struct_tag: json
+omit_slice_element_pointers: false
+skip_validation: false
+schema:
+  - service/*.graphqls
+  - service/*.graphql
+exec:
+  filename: service/server/main_gen.go
+  package: server
+resolver:
+  layout: follow-schema
+  dir: service
+  package: service
+model:
+  filename: service/model/main_gen.go
+  package: model
+autobind:
+  - github.com/bryk-io/dlt4eu/service/model

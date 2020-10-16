@@ -1,0 +1,16 @@
+{
+  "name": "DLT4EU",
+  "schemaPath": "service/schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "GraphQL Endpoint": {
+        "introspect": true,
+        "url": "http://localhost:8080/graphql",
+        "headers": {
+          "user-agent": "dlt4eu",
+          "authorization": "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzUxMiIsImN0eSI6ImRsdDRldS52Yy8wLjEuMCIsImtpZCI6ImE5OmMyOmIzOmE4OjMzOmE1OjExOjg0OjcyOjUxOjRjOjI2OmUyOjNmOmIzOjg1In0.eyJhdWQiOlsiZGx0NGV1LmJyeWsuaW8iXSwiZXhwIjoxNjA1NDE0ODQxLCJpYXQiOjE2MDI4MjI4NDEsImlzcyI6ImRsdDRldS5icnlrLmlvIiwianRpIjoiZmJlMjBhMDgtMzNiZC00ZTQ3LTlmMTQtNDI4MDQ5MWU2YmY1IiwibmJmIjoxNjAyODIyODQxLCJyb2xlIjoiYWRtaW4iLCJzdWIiOiJiZW5AYWlkLnRlY2hub2xvZ3kifQ.AVCiT29ov9jzMzxWE6Cgc3Nhd6OoTIOBWcZIvl85VXv4Nsq7_cjhsm-5O5-q3Ytc4OG8Tau7SXimuv9mLIwCniQSALvy19PBtzNFsTU6bHHAwMvNxFnOHzKWSx0lVjralRpdCPB2ic3G3eTIMu4c2Zgau7-FtI3SXNC4wZ4nl2ipvN4F"
+        }
+      }
+    }
+  }
+}

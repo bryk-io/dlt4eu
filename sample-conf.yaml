@@ -1,0 +1,50 @@
+http:
+  port: 8080
+graphql:
+  max_complexity: 3000
+  introspection: true
+  options_enabled: true
+  get_enabled: true
+  post_enabled: true
+  apollo_tracing: false
+  query_cache: 512
+  apq: 100
+  subscription_origins:
+    - "*"
+  multipart:
+    enabled: false
+    max_upload_size: 10
+    max_memory: 5
+observability:
+  service_name: "dlt4eu"
+  service_version: "0.1.0"
+  attributes: {}
+  global: true
+  log_json: false
+middleware:
+  metadata:
+    headers:
+      - authorization
+      - x-api-key
+  cors:
+    max_age: 300
+    options_status_code: 200
+    allow_credentials: true
+    ignore_options: false
+    allowed_headers:
+      - authorization
+      - content-type
+      - x-api-key
+    allowed_methods:
+      - get
+      - head
+      - post
+      - options
+    allowed_origins:
+      - "*"
+    exposed_headers:
+      - authorization
+      - x-api-key
+service:
+  issuer: dlt4eu.bryk.io
+  key: LS0tLS1CRUdJTiBFQyBQUklWQVRFIEtFWS0tLS0tCk1JSGNBZ0VCQkVJQkJpdTFKdVFPU05jYjAycjF2VGkwVnZlaEhnNjg5YjVuNnpMeThEUHhDREdwQXNocEhqZlMKVE44SjM3dmFvMk1OcHdhY3dXd3BRNXk5R0ZmZVhpYzZwaGVnQndZRks0RUVBQ09oZ1lrRGdZWUFCQUVHYkxPVAp4cGpUcUJwU1luUUgxV3RpeEIxNlFrT1QyT0cwTzk5NjdEeFVYL2RsUiszeFNGc1lhcUxhTFRrZ096SWoweWJ4ClgycFNjZk1ZZCsrQkJQa0dnQUJMMlByWUZOWld1VFdjNE9BOXhRRlBROUY4RlJCelhDZGhNbTBkdnBGT2szY2sKOXRMYmtRWVo2ZHpRb3pTUHB1NE9mdXNzV3BVN2V4bjdJeEVTMnNpS1ZnPT0KLS0tLS1FTkQgRUMgUFJJVkFURSBLRVktLS0tLQo
