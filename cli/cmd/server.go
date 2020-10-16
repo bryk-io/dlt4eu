@@ -79,6 +79,7 @@ func runServer(_ *cobra.Command, _ []string) error {
 	srv.Use(middleware.ProxyHeaders())
 	srv.Use(middleware.CORS(helper.MiddlewareCORS()))
 	srv.Use(middleware.ContextMetadata(helper.MiddlewareMetadata()))
+	srv.Use(customHeaders())
 	srv.Use(oop.HTTPServerMiddleware())
 
 	// Apply GraphQL extensions.
@@ -104,4 +105,16 @@ func runServer(_ *cobra.Command, _ []string) error {
 	oop.Info("closing server")
 	handler.Shutdown()
 	return nil
+}
+
+// Attach version information as HTTP headers on all responses
+func customHeaders() func(handler http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		fn := func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("x-dlt4eu-version", coreVersion)
+			w.Header().Set("x-dlt4eu-build", buildCode)
+			next.ServeHTTP(w, r)
+		}
+		return http.HandlerFunc(fn)
+	}
 }

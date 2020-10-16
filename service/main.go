@@ -44,9 +44,9 @@ func New(conf *Config) (*Handler, error) {
 
 	// Return handler instance
 	return &Handler{
-		conf:   conf,
+		conf:     conf,
 		resolver: r,
-		schema: server.NewExecutableSchema(cs),
+		schema:   server.NewExecutableSchema(cs),
 	}, nil
 }
 

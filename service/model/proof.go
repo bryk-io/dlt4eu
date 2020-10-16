@@ -7,6 +7,9 @@ import (
 	"go.bryk.io/x/ccg/did"
 )
 
+// Proof add authentication and integrity protection to linked data documents through
+// the use of mathematical algorithms.
+// https://w3c-ccg.github.io/ld-proofs/
 type Proof struct {
 	src *did.ProofLD
 
@@ -54,6 +57,7 @@ type Proof struct {
 	Challenge string `json:"challenge"`
 }
 
+// Created returns the proof creation's date.
 func (el *Proof) Created(format DateFormat) string {
 	t, err := time.Parse(time.RFC3339, el.src.Created)
 	if err != nil {
@@ -62,6 +66,9 @@ func (el *Proof) Created(format DateFormat) string {
 	return formatDate(t.Unix(), format)
 }
 
+// Document produces an RDF dataset on the proof's JSON-LD document, the algorithm used
+// is "URDNA2015" and the format "application/n-quads".
+// https://json-ld.github.io/normalization/spec
 func (el *Proof) Document() string {
 	ld, err := el.src.NormalizedLD()
 	if err != nil {
@@ -70,6 +77,7 @@ func (el *Proof) Document() string {
 	return string(ld)
 }
 
+// Value generated for the proof, encoded en base64 as defined in RFC 4648.
 func (el *Proof) Value() string {
 	return base64.StdEncoding.EncodeToString(el.src.Value)
 }

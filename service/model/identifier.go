@@ -6,12 +6,14 @@ import (
 	"go.bryk.io/x/ccg/did"
 )
 
+// Identifier provides a DID instance based on the specification v1.0
 type Identifier struct {
 	id      *did.Identifier
 	created int64
 	updated int64
 }
 
+// NewIdentifier properly initialize a new DID instance with a single "master" key.
 func NewIdentifier() (*Identifier, error) {
 	id, err := did.NewIdentifierWithMode("dlt4eu", "", did.ModeUUID)
 	if err != nil {
@@ -31,35 +33,43 @@ func NewIdentifier() (*Identifier, error) {
 	}, nil
 }
 
+// ID returns a textual representation of the DID instance.
 func (el *Identifier) ID() string {
 	return el.id.String()
 }
 
+// Created returns the date of the identifier's original creation.
 func (el *Identifier) Created(format DateFormat) string {
 	return formatDate(el.created, format)
 }
 
+// Updated returns the date of the identifier's last update operation.
 func (el *Identifier) Updated(format DateFormat) string {
 	return formatDate(el.updated, format)
 }
 
+// AuthenticationMethods enabled for the identifier.
 func (el *Identifier) AuthenticationMethods() []string {
 	return el.id.GetVerificationMethod(did.AuthenticationVM)
 }
 
+// Keys returns the registered keys on the identifier.
 func (el *Identifier) Keys() []*PublicKey {
-	var list []*PublicKey
-	for _, k := range el.id.Keys() {
-		list = append(list, &PublicKey{
+	list := make([]*PublicKey, len(el.id.Keys()))
+	for i, k := range el.id.Keys() {
+		list[i] = &PublicKey{
 			ID:         k.ID,
 			Kind:       k.Type.String(),
 			Controller: k.Controller,
 			Value:      k.ValueBase64,
-		})
+		}
 	}
 	return list
 }
 
+// Document returns the DID document for the identifier instance. The returned document
+// remove any private key material present, making the document safe to be published and
+// shared.
 func (el *Identifier) Document(mode DocumentMode) string {
 	var ld []byte
 	var err error
@@ -77,6 +87,8 @@ func (el *Identifier) Document(mode DocumentMode) string {
 	return string(ld)
 }
 
+// ProduceProof will generate a valid linked data proof for the provided data.
+// https://w3c-dvcg.github.io/ld-proofs
 func (el *Identifier) ProduceProof(req *ProofRequest) (*Proof, error) {
 	key := el.id.Key("master")
 	src, err := key.ProduceProof([]byte(req.Data), req.Purpose, req.Domain)

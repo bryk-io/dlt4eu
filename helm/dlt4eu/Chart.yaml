@@ -1,0 +1,17 @@
+apiVersion: v2
+name: dlt4eu
+description: DLT4EU GrapgQL API
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+home: https://github.com/bryk-io/dlt4eu
+icon: https://raw.githubusercontent.com/bryk-io/dlt4eu/master/helm/dlt4eu/icon.png
+sources:
+  - https://github.com/bryk-io/dlt4eu
+keywords:
+  - dlt4eu
+  - identity
+maintainers:
+  - name: Ben Cessa
+    email: ben@aid.technology
+    url: https://github.com/bcessa

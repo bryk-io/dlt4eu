@@ -9,8 +9,8 @@ import (
 )
 
 var tokenCmd = &cobra.Command{
-	Use:   "token",
-	Short: "Generate an admin credential to access the API",
+	Use:     "token",
+	Short:   "Generate an admin credential to access the API",
 	Aliases: []string{"admin", "credential"},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Load service handler settings.

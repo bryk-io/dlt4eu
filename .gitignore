@@ -33,3 +33,6 @@ tmp
 
 # Code coverage reports
 coverage.*
+
+# Include all helm files
+!helm/*
