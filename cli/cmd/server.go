@@ -88,6 +88,7 @@ func runServer(_ *cobra.Command, _ []string) error {
 	// Start server
 	router := http.NewServeMux()
 	router.Handle("/graphql", srv.GetHandler())
+	router.HandleFunc("/ping", pingHandler())
 	oop.Infof("waiting for requests on: http://localhost:%d/graphql", helper.Data.HTTP.Port)
 	go func() {
 		_ = http.ListenAndServe(fmt.Sprintf(":%d", helper.Data.HTTP.Port), router)
@@ -116,5 +117,12 @@ func customHeaders() func(handler http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 		}
 		return http.HandlerFunc(fn)
+	}
+}
+
+// Manage a basic (not instrumented) ping request
+func pingHandler() http.HandlerFunc {
+	return func(res http.ResponseWriter, _ *http.Request) {
+		_, _ = res.Write([]byte("ok"))
 	}
 }

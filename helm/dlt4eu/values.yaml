@@ -77,6 +77,12 @@ tolerations: []
 
 affinity: {}
 
-livenessProbe: {}
+livenessProbe:
+  httpGet:
+    path: /ping
+    port: http
 
-readinessProbe: {}
+readinessProbe:
+  httpGet:
+    path: /ping
+    port: http
