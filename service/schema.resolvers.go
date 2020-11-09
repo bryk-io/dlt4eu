@@ -12,6 +12,7 @@ import (
 	"github.com/bryk-io/dlt4eu/service/model"
 	"github.com/bryk-io/dlt4eu/service/server"
 	"github.com/google/uuid"
+	"go.bryk.io/x/ccg/did"
 	"go.bryk.io/x/jwx"
 )
 
@@ -26,6 +27,28 @@ func (r *mutationResolver) NewIdentifier(ctx context.Context) (*model.Identifier
 	return id, err
 }
 
+func (r *mutationResolver) PublishIdentifier(
+	ctx context.Context,
+	req *model.PublishRequest) (*model.Identifier, error) {
+	if err := r.authenticate(ctx); err != nil {
+		return nil, err
+	}
+
+	// Parse DID document and load identifier
+	doc := &did.Document{}
+	if err := json.Unmarshal([]byte(req.Document), doc); err != nil {
+		return nil, err
+	}
+	id, err := model.LoadIdentifier(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	// Store and return identifier
+	r.addIdentifier(id)
+	return id, nil
+}
+
 func (r *mutationResolver) NewProof(ctx context.Context, req *model.ProofRequest) (*model.Proof, error) {
 	if err := r.authenticate(ctx); err != nil {
 		return nil, err
@@ -37,7 +60,9 @@ func (r *mutationResolver) NewProof(ctx context.Context, req *model.ProofRequest
 	return id.ProduceProof(req)
 }
 
-func (r *mutationResolver) NewCredential(ctx context.Context, req *model.CredentialRequest) (*model.Credential, error) {
+func (r *mutationResolver) NewCredential(
+	ctx context.Context,
+	req *model.CredentialRequest) (*model.Credential, error) {
 	if err := r.authenticate(ctx); err != nil {
 		return nil, err
 	}

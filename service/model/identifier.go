@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"time"
 
 	"go.bryk.io/x/ccg/did"
@@ -30,6 +31,24 @@ func NewIdentifier() (*Identifier, error) {
 		id:      id,
 		created: now,
 		updated: now,
+	}, nil
+}
+
+// LoadIdentifier prepares an identifier instance from a provided DID document.
+func LoadIdentifier(doc *did.Document) (*Identifier, error) {
+	id, err := did.FromDocument(doc)
+	if err != nil {
+		return nil, errors.New("invalid DID document")
+	}
+	now := time.Now()
+	created, err := time.Parse(time.RFC3339, doc.Created)
+	if err != nil {
+		created = now
+	}
+	return &Identifier{
+		id:      id,
+		created: created.Unix(),
+		updated: now.Unix(),
 	}, nil
 }
 

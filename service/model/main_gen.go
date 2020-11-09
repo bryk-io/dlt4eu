@@ -73,6 +73,12 @@ type PublicKey struct {
 	Value string `json:"value"`
 }
 
+// Publish a previously generated identifier.
+type PublishRequest struct {
+	// JSON-encoded DID document.
+	Document string `json:"document"`
+}
+
 // The DateFormat enum list all the supported styles available
 // when formatting Time values.
 type DateFormat string

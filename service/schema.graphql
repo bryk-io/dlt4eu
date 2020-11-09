@@ -306,6 +306,16 @@ input CredentialRequest {
   payload: String!
 }
 
+"""
+Publish a previously generated identifier.
+"""
+input PublishRequest {
+  """
+  JSON-encoded DID document.
+  """
+  document: String!
+}
+
 type Query {
   """
   Retrieve the associated information with a given DID.
@@ -333,6 +343,11 @@ type Mutation {
   Generate a new DID.
   """
   newIdentifier: Identifier!
+
+  """
+  Publish a previously generated identifier.
+  """
+  publishIdentifier(req: PublishRequest): Identifier!
 
   """
   Generate a new proof document.

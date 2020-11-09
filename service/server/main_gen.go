@@ -57,9 +57,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		NewCredential func(childComplexity int, req *model.CredentialRequest) int
-		NewIdentifier func(childComplexity int) int
-		NewProof      func(childComplexity int, req *model.ProofRequest) int
+		NewCredential     func(childComplexity int, req *model.CredentialRequest) int
+		NewIdentifier     func(childComplexity int) int
+		NewProof          func(childComplexity int, req *model.ProofRequest) int
+		PublishIdentifier func(childComplexity int, req *model.PublishRequest) int
 	}
 
 	Proof struct {
@@ -90,6 +91,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	NewIdentifier(ctx context.Context) (*model.Identifier, error)
+	PublishIdentifier(ctx context.Context, req *model.PublishRequest) (*model.Identifier, error)
 	NewProof(ctx context.Context, req *model.ProofRequest) (*model.Proof, error)
 	NewCredential(ctx context.Context, req *model.CredentialRequest) (*model.Credential, error)
 }
@@ -207,6 +209,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.NewProof(childComplexity, args["req"].(*model.ProofRequest)), true
+
+	case "Mutation.publishIdentifier":
+		if e.complexity.Mutation.PublishIdentifier == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_publishIdentifier_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.PublishIdentifier(childComplexity, args["req"].(*model.PublishRequest)), true
 
 	case "Proof.challenge":
 		if e.complexity.Proof.Challenge == nil {
@@ -707,6 +721,16 @@ input CredentialRequest {
   payload: String!
 }
 
+"""
+Publish a previously generated identifier.
+"""
+input PublishRequest {
+  """
+  JSON-encoded DID document.
+  """
+  document: String!
+}
+
 type Query {
   """
   Retrieve the associated information with a given DID.
@@ -736,6 +760,11 @@ type Mutation {
   newIdentifier: Identifier!
 
   """
+  Publish a previously generated identifier.
+  """
+  publishIdentifier(req: PublishRequest): Identifier!
+
+  """
   Generate a new proof document.
   """
   newProof(req: ProofRequest): Proof!
@@ -745,9 +774,6 @@ type Mutation {
   """
   newCredential(req: CredentialRequest): Credential!
 }
-
-#
-#type Subscription {}
 `, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)
@@ -823,6 +849,21 @@ func (ec *executionContext) field_Mutation_newProof_args(ctx context.Context, ra
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
 		arg0, err = ec.unmarshalOProofRequest2ᚖgithubᚗcomᚋbrykᚑioᚋdlt4euᚋserviceᚋmodelᚐProofRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["req"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_publishIdentifier_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.PublishRequest
+	if tmp, ok := rawArgs["req"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
+		arg0, err = ec.unmarshalOPublishRequest2ᚖgithubᚗcomᚋbrykᚑioᚋdlt4euᚋserviceᚋmodelᚐPublishRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1214,6 +1255,48 @@ func (ec *executionContext) _Mutation_newIdentifier(ctx context.Context, field g
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Mutation().NewIdentifier(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Identifier)
+	fc.Result = res
+	return ec.marshalNIdentifier2ᚖgithubᚗcomᚋbrykᚑioᚋdlt4euᚋserviceᚋmodelᚐIdentifier(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) _Mutation_publishIdentifier(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	fc := &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		Args:       nil,
+		IsMethod:   true,
+		IsResolver: true,
+	}
+
+	ctx = graphql.WithFieldContext(ctx, fc)
+	rawArgs := field.ArgumentMap(ec.Variables)
+	args, err := ec.field_Mutation_publishIdentifier_args(ctx, rawArgs)
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	fc.Args = args
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().PublishIdentifier(rctx, args["req"].(*model.PublishRequest))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3146,6 +3229,26 @@ func (ec *executionContext) unmarshalInputProofRequest(ctx context.Context, obj 
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputPublishRequest(ctx context.Context, obj interface{}) (model.PublishRequest, error) {
+	var it model.PublishRequest
+	var asMap = obj.(map[string]interface{})
+
+	for k, v := range asMap {
+		switch k {
+		case "document":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("document"))
+			it.Document, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -3250,6 +3353,11 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "newIdentifier":
 			out.Values[i] = ec._Mutation_newIdentifier(ctx, field)
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "publishIdentifier":
+			out.Values[i] = ec._Mutation_publishIdentifier(ctx, field)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
@@ -4162,6 +4270,14 @@ func (ec *executionContext) unmarshalOProofRequest2ᚖgithubᚗcomᚋbrykᚑio�
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputProofRequest(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOPublishRequest2ᚖgithubᚗcomᚋbrykᚑioᚋdlt4euᚋserviceᚋmodelᚐPublishRequest(ctx context.Context, v interface{}) (*model.PublishRequest, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPublishRequest(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
