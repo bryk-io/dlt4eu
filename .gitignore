@@ -36,3 +36,6 @@ coverage.*
 
 # Include all helm files
 !helm/*
+
+# Include compiled WASM modules
+!*.wasm

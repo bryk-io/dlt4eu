@@ -7,10 +7,10 @@ require (
 	github.com/golang/protobuf v1.4.3
 	github.com/google/uuid v1.1.2
 	github.com/kr/pretty v0.2.0 // indirect
-	github.com/spf13/cobra v1.1.0
+	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	github.com/vektah/gqlparser/v2 v2.1.0
-	go.bryk.io/x v0.0.0-20201015192914-c2cffdf29ee7
+	go.bryk.io/x v0.0.0-20201107184415-0e31fd3f6106
 	google.golang.org/protobuf v1.25.0
 )
 
